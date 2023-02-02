@@ -131,4 +131,54 @@ app.get("/genratenlp/:API/:Feature",async (req,resp)=>{
 })
 
 
+
+const userSchema=new mongoose.Schema({
+    usn:String,
+    pass:String
+});
+const userModel=mongoose.model("userdet",userSchema);
+
+app.post("/signup",async (req,resp)=>{
+    let tuser=await userModel.find({usn:req.body.usn});
+    if(tuser.length==0){
+      let temp=new userModel({
+        usn:req.body.usn,
+        pass:req.body.pass
+      });
+      await temp.save();
+      resp.send(JSON.stringify({
+        err:"false"
+      }))
+    }
+    else{
+        resp.send(JSON.stringify({
+            err:"true"
+        }))
+    }
+})
+
+app.post("/login",async (req,resp)=>{
+    let tuser=await userModel.find({
+        usn:req.body.usn
+    });
+    if(tuser.length==0){
+        resp.send(JSON.stringify({
+            err:"true"
+        }))
+    }
+    else{
+        if(req.body.pass==tuser[0].pass){
+            resp.send(JSON.stringify({
+                err:"false"
+            })) 
+        }
+        else{
+            resp.send(JSON.stringify({
+                err:"true"
+            }))
+        }
+    }
+})
+
+
 app.listen(5000);
