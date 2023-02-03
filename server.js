@@ -131,6 +131,12 @@ app.get("/genratenlp/:API/:Feature",async (req,resp)=>{
 })
 
 
+app.get("/report/:API/:Feature",async (req,resp)=>{
+    const arr=await AnalysisModel.find({apikey:req.params.API});
+    resp.send(JSON.stringify(arr));
+})
+
+
 
 const userSchema=new mongoose.Schema({
     usn:String,
@@ -179,6 +185,39 @@ app.post("/login",async (req,resp)=>{
         }
     }
 })
+
+
+const freatureSchema=new mongoose.Schema({
+    featname:String,
+    fdesc:String,
+    usn:String
+});
+const featureModel=mongoose.model("feature",freatureSchema);
+
+
+app.post("/addFeature/:id",async (req,resp)=>{
+    let obj=new featureModel({
+        featname:req.body.title,
+        fdesc:req.body.desc,
+        usn:req.params.id,
+    });
+    await obj.save();
+    resp.send(JSON.stringify(
+        {
+            code:200
+        }
+    ));
+})
+
+app.get("/getfeatures/:id",async(req,resp)=>{
+    const arr=await featureModel.find({usn:req.params.id});
+    resp.send(JSON.stringify(arr));
+})
+
+
+
+
+
 
 
 app.listen(5000);
