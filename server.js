@@ -131,8 +131,10 @@ app.get("/genratenlp/:API/:Feature",async (req,resp)=>{
 })
 
 
-app.get("/report/:API/:Feature",async (req,resp)=>{
-    const arr=await AnalysisModel.find({apikey:req.params.API});
+app.post("/report/:API",async (req,resp)=>{
+    console.log(req.body.idi)
+    const arr=await AnalysisModel.find({apikey:req.params.API,feature:req.body.idi});
+    await featureModel.deleteOne({usn:req.params.API,featname:req.body.idi});
     resp.send(JSON.stringify(arr));
 })
 
